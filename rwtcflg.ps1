@@ -12,14 +12,20 @@ $smtp_server = "your smtp server"
 # who shall receive the mail
 $mail_recipients = "test1@gmail.com","test2@gmail.com"
 
-# main food array, enter food choices here
+# main food array, enter food choices here (12+ choices recommended)
 $food_array =
 "food_choice_1",
 "food_choice_2",
 "food_choice_3",
 "food_choice_4",
 "food_choice_5",
-"food_choice_6"
+"food_choice_6",
+"food_choice_7",
+"food_choice_8",
+"food_choice_9",
+"food_choice_10",
+"food_choice_11",
+"food_choice_12"
 
 ############### /SETTINGS ###############
 
