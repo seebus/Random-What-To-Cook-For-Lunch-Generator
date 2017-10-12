@@ -13,7 +13,13 @@ $smtp_server = "your smtp server"
 $mail_recipients = "test1@gmail.com","test2@gmail.com"
 
 # main food array, enter food choices here
-$food_array = "food_choice_1","food_choice_2","food_choice_3","food_choice_4","food_choice_5","food_choice_6"
+$food_array =
+"food_choice_1",
+"food_choice_2",
+"food_choice_3",
+"food_choice_4",
+"food_choice_5",
+"food_choice_6"
 
 ############### /SETTINGS ###############
 
@@ -25,7 +31,7 @@ $food_array_calculate_minimum = @()
 $food_array_priority = @()
 $food_array_non_priority = @()
 
-# calculate food with the lowest usage till date and therefor highest priority
+# calculate food with the lowest usage till date and therefore highest priority
 foreach ($food in $food_array)
     {
     $food_array_calculate_minimum += ((Get-Content C:\tmp\food.log | Select-String -Pattern $food) | Measure-Object).count
@@ -46,13 +52,13 @@ foreach ($food in $food_array)
         }
     }
 
-# watch the food array priority count
+# watch the food array priority count, if only one food is left we need to act
 $food_array_priority_watcher = (($food_array_priority | Measure-Object).Count)
 
 # calculate what's to eat for the weekend from high priority food array
 $food_sa = $food_array_priority | Get-Random
 
-# if only one food in the priority array is take another one from the non priorty array
+# if only one food in the priority array is left take another one from the non priorty array to make the do loop work
 if ($food_array_priority_watcher -eq 1)
     {
     $food_su = ($food_array_non_priority | Get-Random)
@@ -68,6 +74,7 @@ if ($food_su -eq $food_sa)
     do {$food_su = $food_array_priority | Get-Random} while ($food_su -eq $food_sa)
     }
 
+# count the meals and make them available for the statistics
 $food_log = Get-Content $db_path\food.log
 $food_sa_count = ($($food_log | Select-String -Pattern $food_sa) | Measure-Object).count
 $food_su_count = ($($food_log | Select-String -Pattern $food_su) | Measure-Object).count
@@ -76,9 +83,11 @@ $food_su_count = ($($food_log | Select-String -Pattern $food_su) | Measure-Objec
 "$food_sa;$date;$food_sa_count" | Out-File $db_path\food.log -Append
 "$food_su;$date;$food_su_count" | Out-File $db_path\food.log -Append
 
+# set mail credentials
 $pw = $smtp_password | ConvertTo-SecureString -asPlainText -Force
 $cred = New-Object System.Management.Automation.PSCredential $smtp_login, $pw
 
+#send mail to recipients
 Send-MailMessage -to $mail_recipients -subject "Random-What-To-Cook-For-Lunch-Generator" -body "
 Hey!<br/>
 <br/>
