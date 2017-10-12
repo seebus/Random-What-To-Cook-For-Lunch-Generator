@@ -38,11 +38,14 @@ foreach ($food in $food_array)
     }
     $food_minimum = ($food_array_calculate_minimum | Measure-Object -Minimum).Minimum
 
-# create new array with the highest priority food
+# create new array with the highest priority food and make sure the food wasn't suggested the last X weeks
+
+$last_meals = (Get-Content $db_path\food.log | Select-Object -Last 5) -replace ';.*',''
+
 foreach ($food in $food_array)
     {
-    $food_count = ((Get-Content C:\tmp\food.log | Select-String -Pattern $food) | Measure-Object).count
-    if ($food_count -eq $food_minimum)
+    $food_count = ((Get-Content $db_path\food.log | Select-String -Pattern $food) | Measure-Object).count
+    if ($food_count -eq $food_minimum -and $food -notmatch $last_meals)
         {
         $food_array_priority += $food
         }
@@ -51,7 +54,7 @@ foreach ($food in $food_array)
         $food_array_non_priority += $food
         }
     }
-
+    
 # watch the food array priority count, if only one food is left we need to act
 $food_array_priority_watcher = (($food_array_priority | Measure-Object).Count)
 
