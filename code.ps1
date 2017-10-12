@@ -38,9 +38,9 @@ foreach ($food in $food_array)
     }
     $food_minimum = ($food_array_calculate_minimum | Measure-Object -Minimum).Minimum
 
-# create new array with the highest priority food and make sure the food wasn't suggested the last X weeks
+# create new array with the highest priority food and make sure the food wasn't suggested the last X meals
 
-$last_meals = (Get-Content $db_path\food.log | Select-Object -Last 5) -replace ';.*',''
+$last_meals = (Get-Content $db_path\food.log | Select-Object -Last 8) -replace ';.*',''
 
 foreach ($food in $food_array)
     {
