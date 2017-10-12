@@ -1,8 +1,20 @@
-﻿# date
-$date = Get-Date -Format "dd.MM.yy"
+﻿# where to store the database?
+$db_path = "C\tmp"
 
-# main food array
-$food_array = "Griechischer Eintopf","Hot Dogs oder Burger","Geschnetzeltes mit Schmorgurke","den Joker","Lasagne","La Vialla","selbstgemachte Pizza","Pizza vom Lieferdienst","Türkische Suppe","Gulasch","Geschnetzeltes","Gefüllte Paprika","Spaghetti a la Mama","Spaghetti a la Papa","Chilli","Reis mit gelber Soße","Köttbullar","Fischstäbchen mit Pommes","Pellkartoffeln mit Hering","Nudelauflauf","Gemüsepfanne mit Reis","Rouladen","Blumenkohl mit Hollandaise","Pellkartoffeln mit Quark","Bandnudeln mit Hähnchenfleisch","Labskaus","Frikadellen","Tomatenreis mit Bifteki","Bulgursalat mit Zucuk"
+#settings for smtp
+$smtp_address = "your smtp mail adress"
+$smtp_login = "your smtp login"
+$smtp_password = "your smtp password"
+$smtp_server = "your smtp server"
+
+# who shall receive the mail
+$mail_recipients = "test1@gmail.com","test2@gmail.com"
+
+# main food array, enter food choices here
+$food_array = "food_choice_1","food_choice_2","food_choice_3","food_choice_4","food_choice_5","food_choice_6"
+
+# date
+$date = Get-Date -Format "dd.MM.yy"
 
 # reset arrays
 $food_array_calculate_minimum = @()
@@ -52,23 +64,20 @@ if ($food_su -eq $food_sa)
     do {$food_su = $food_array_priority | Get-Random} while ($food_su -eq $food_sa)
     }
 
-$food_log = Get-Content C:\tmp\food.log
+$food_log = Get-Content $db_path\food.log
 $food_sa_count = ($($food_log | Select-String -Pattern $food_sa) | Measure-Object).count
 $food_su_count = ($($food_log | Select-String -Pattern $food_su) | Measure-Object).count
 
 # write food to database and attach date and count for statistics
-"$food_sa;$date;$food_sa_count" | Out-File C:\tmp\food.log -Append
-"$food_su;$date;$food_su_count" | Out-File C:\tmp\food.log -Append
+"$food_sa;$date;$food_sa_count" | Out-File $db_path\food.log -Append
+"$food_su;$date;$food_su_count" | Out-File $db_path\food.log -Append
 
-# who shall receive the mail
-$mail_recipients = "test@gmail.com"
-
-$pw = "your-smtp-password" | ConvertTo-SecureString -asPlainText -Force
-$cred = New-Object System.Management.Automation.PSCredential "your-smtp-login", $pw
+$pw = $smtp_password | ConvertTo-SecureString -asPlainText -Force
+$cred = New-Object System.Management.Automation.PSCredential $smtp_login, $pw
 
 Send-MailMessage -to $mail_recipients -subject "Random-What-To-Cook-For-Lunch-Generator" -body "
 Hey!<br/>
 <br/>
 The Random-What-To-Cook-For-Lunch-Generator decided! Saturday we are having <b>$food_sa</b> and on Sunday <b>$food_su</b>!<br/>
 <br/>
-" -smtpserver your-smtp-server -Credential $cred -from "your-mail-address" -Port 25 -Encoding ([System.Text.Encoding]::UTF8) -BodyAsHtml
+" -smtpserver $smtp_server -Credential $cred -from $smtp_address -Port 25 -Encoding ([System.Text.Encoding]::UTF8) -BodyAsHtml
