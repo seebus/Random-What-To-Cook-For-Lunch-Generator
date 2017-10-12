@@ -1,4 +1,6 @@
-﻿# where to store the database?
+ ############### SETTINGS ###############
+ 
+ # where to store the database?
 $db_path = "C\tmp"
 
 #settings for smtp
@@ -12,6 +14,8 @@ $mail_recipients = "test1@gmail.com","test2@gmail.com"
 
 # main food array, enter food choices here
 $food_array = "food_choice_1","food_choice_2","food_choice_3","food_choice_4","food_choice_5","food_choice_6"
+
+############### /SETTINGS ###############
 
 # date
 $date = Get-Date -Format "dd.MM.yy"
